@@ -3,28 +3,93 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-[#F8FAFC] text-slate-900 font-sans antialiased;
+  html {
+    @apply scroll-smooth;
   }
-
+  body {
+    @apply bg-surface-bg text-text-primary font-sans antialiased;
+  }
   *:focus-visible {
-    @apply outline-none ring-2 ring-brand-700 ring-offset-2 transition-all;
+    @apply outline-none ring-2 ring-accent-blue ring-offset-2 ring-offset-surface-bg transition-all;
   }
 }
 
-/* Custom scrollbar styling for high density tables */
+@layer utilities {
+  /* Gradient text for hero score numbers */
+  .text-gradient {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Gradient border utility */
+  .border-gradient {
+    border: 1px solid transparent;
+    background-clip: padding-box;
+  }
+
+  /* Glow animation for live indicator */
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(59,130,246,0); }
+  }
+
+  /* Gauge fill animation */
+  .gauge-fill {
+    animation: gaugeFill 1.2s ease-out forwards;
+  }
+
+  @keyframes gaugeFill {
+    from { stroke-dashoffset: 100%; }
+    to { stroke-dashoffset: var(--target-offset); }
+  }
+
+  /* Sidebar collapse transition */
+  .sidebar-transition {
+    transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Edge fade gradient hint for horizontally scrollable tables */
+  .scroll-fade-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 48px;
+    height: 100%;
+    background: linear-gradient(to left, #121826, transparent);
+    pointer-events: none;
+  }
+}
+
+/* Custom scrollbar — dark theme */
 ::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: 6px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
+  background: #0D1220;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: #2A3448;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #3B82F6;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-glow,
+  .gauge-fill,
+  .sidebar-transition,
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
