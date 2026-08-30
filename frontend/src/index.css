@@ -4,7 +4,11 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    @apply bg-[#F8FAFC] text-slate-900 font-sans antialiased;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brand-700 ring-offset-2 transition-all;
   }
 }
 

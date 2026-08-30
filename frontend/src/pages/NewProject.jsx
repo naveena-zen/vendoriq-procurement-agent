@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createProjectApi, uploadVendorApi, analyzeProjectApi } from '../api/client';
-import { ArrowLeft, Plus, Trash2, Upload, Shield, CheckCircle2, Loader2, DollarSign, Sliders, FileSpreadsheet } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Upload, Shield, CheckCircle2, Loader2, DollarSign, Sliders, FileSpreadsheet, FileText } from 'lucide-react';
 
 export default function NewProject() {
   const navigate = useNavigate();
@@ -63,7 +63,6 @@ export default function NewProject() {
       });
     }
 
-    // Ensure strict 100 sum rounding fix
     const total = Object.values(newWeights).reduce((a, b) => a + b, 0);
     if (total !== 100) {
       newWeights[otherKeys[0]] = Math.round((newWeights[otherKeys[0]] + (100 - total)) * 10) / 10;
@@ -72,7 +71,6 @@ export default function NewProject() {
     setWeights(newWeights);
   };
 
-  // Vendor Rows Handlers
   const addVendorRow = () => {
     setVendors([
       ...vendors,
@@ -95,8 +93,8 @@ export default function NewProject() {
   };
 
   const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
+  const isValidTotal = Math.round(totalWeight) === 100;
 
-  // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -116,7 +114,6 @@ export default function NewProject() {
       setIsAnalyzing(true);
       setCurrentStepIndex(0);
 
-      // Animate progress steps
       const interval = setInterval(() => {
         setCurrentStepIndex((prev) => {
           if (prev < analysisSteps.length - 1) return prev + 1;
@@ -125,7 +122,6 @@ export default function NewProject() {
         });
       }, 1200);
 
-      // 1. Create Project
       const mustHavesList = mustHavesText
         .split('\n')
         .map((s) => s.trim())
@@ -141,12 +137,10 @@ export default function NewProject() {
         },
       });
 
-      // 2. Upload Vendor files
       for (const v of validVendors) {
         await uploadVendorApi(newProj.id, v.name, v.file);
       }
 
-      // 3. Trigger Analysis pipeline
       await analyzeProjectApi(newProj.id);
 
       clearInterval(interval);
@@ -158,29 +152,29 @@ export default function NewProject() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
-      {/* Top Bar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-16">
+      {/* Top Header Navigation */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-level-1">
+        <div className="max-w-[720px] mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link to="/" className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="font-bold text-lg text-slate-900">Create Procurement Evaluation Project</h1>
+            <h1 className="font-display font-semibold text-lg text-slate-900">Create Sourcing Evaluation</h1>
           </div>
         </div>
       </header>
 
-      {/* Form Container */}
-      <main className="max-w-5xl mx-auto px-4 pt-8">
+      {/* Main Form Container - Centered Single Column Max-720px */}
+      <main className="max-w-[720px] mx-auto px-4 pt-8">
         {/* Loading Step Overlay Modal */}
         {isAnalyzing && (
           <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl border border-slate-200 text-center">
-              <div className="inline-flex p-4 bg-brand-50 text-brand-600 rounded-full mb-4 animate-bounce">
+            <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-level-3 border border-slate-200 text-center">
+              <div className="inline-flex p-4 bg-indigo-50 text-brand-indigo rounded-full mb-4 animate-bounce">
                 <Loader2 className="w-8 h-8 animate-spin" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">ProcureIQ Intelligence Engine</h3>
+              <h3 className="font-display text-xl font-bold text-slate-900">ProcureIQ Intelligence Engine</h3>
               <p className="text-xs text-slate-500 mt-1 mb-6">Running hybrid multi-provider LLM analysis pipeline</p>
 
               <div className="space-y-2 text-left mb-6">
@@ -194,14 +188,14 @@ export default function NewProject() {
                         isDone
                           ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
                           : isCurrent
-                          ? 'bg-brand-50 border-brand-300 text-brand-900 shadow-sm'
+                          ? 'bg-indigo-50 border-indigo-200 text-brand-indigo shadow-sm'
                           : 'bg-slate-50 border-slate-100 text-slate-400'
                       }`}
                     >
                       {isDone ? (
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       ) : isCurrent ? (
-                        <Loader2 className="w-4 h-4 text-brand-600 animate-spin shrink-0" />
+                        <Loader2 className="w-4 h-4 text-brand-indigo animate-spin shrink-0" />
                       ) : (
                         <div className="w-4 h-4 rounded-full border border-slate-300 shrink-0" />
                       )}
@@ -215,100 +209,102 @@ export default function NewProject() {
         )}
 
         {errorMessage && (
-          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm font-medium">
+          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-medium">
             {errorMessage}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Section 1: Project Details */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <FileSpreadsheet className="w-5 h-5 text-brand-600" />
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-level-1 space-y-5">
+            <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+              <FileSpreadsheet className="w-5 h-5 text-brand-indigo" />
               1. Project Information & Requirement Brief
             </h2>
 
-            <div className="space-y-5">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                Project Title *
+              </label>
+              <input
+                type="text"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="e.g. Cloud Hosting Infrastructure RFP 2026"
+                className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-brand-indigo focus:ring-2 focus:ring-brand-indigo/20 transition-all placeholder:text-slate-400"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Project Title *
+                  Must-Have Requirements (One per line)
                 </label>
-                <input
-                  type="text"
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="e.g. Cloud Hosting Infrastructure RFP 2026"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-brand-500 transition-all"
-                  required
+                <textarea
+                  rows={4}
+                  value={mustHavesText}
+                  onChange={(e) => setMustHavesText(e.target.value)}
+                  placeholder="Enter must-have requirements..."
+                  className="w-full bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 focus:outline-none focus:border-brand-indigo focus:ring-2 focus:ring-brand-indigo/20 transition-all placeholder:text-slate-400"
                 />
+                <p className="text-[11px] text-slate-400 mt-1">Vendors will be penalized in compliance scoring for missing any must-have feature.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Must-Have Features & Requirements (One per line)
+                    Budget Ceiling ($ USD)
                   </label>
-                  <textarea
-                    rows={4}
-                    value={mustHavesText}
-                    onChange={(e) => setMustHavesText(e.target.value)}
-                    placeholder="Enter must-have requirements..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-mono text-slate-800 focus:bg-white focus:outline-none focus:border-brand-500 transition-all"
-                  />
-                  <p className="text-[11px] text-slate-400 mt-1">Vendors will be penalized in compliance scoring for missing any must-have feature.</p>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                      Budget Ceiling ($ USD)
-                    </label>
-                    <div className="relative">
-                      <DollarSign className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input
-                        type="number"
-                        value={budgetCeiling}
-                        onChange={(e) => setBudgetCeiling(e.target.value)}
-                        placeholder="50000"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-9 pr-4 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-brand-500 transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                      Evaluation Notes
-                    </label>
+                  <div className="relative">
+                    <DollarSign className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
                     <input
-                      type="text"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Context notes..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-brand-500 transition-all"
+                      type="number"
+                      value={budgetCeiling}
+                      onChange={(e) => setBudgetCeiling(e.target.value)}
+                      placeholder="50000"
+                      className="w-full bg-white border border-slate-200 rounded-lg py-2.5 pl-9 pr-4 text-sm font-mono text-slate-900 focus:outline-none focus:border-brand-indigo focus:ring-2 focus:ring-brand-indigo/20 transition-all"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                    Evaluation Context Notes
+                  </label>
+                  <input
+                    type="text"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Context notes..."
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-indigo focus:ring-2 focus:ring-brand-indigo/20 transition-all"
+                  />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Section 2: Priority Weight Sliders */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-brand-600" />
-                2. Priority Evaluation Weights (Must sum to 100%)
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-level-1 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+                <Sliders className="w-5 h-5 text-brand-indigo" />
+                2. Priority Evaluation Weights
               </h2>
-              <span className={`text-xs font-bold px-3 py-1 rounded-full ${totalWeight === 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+              <span className={`text-xs font-mono font-semibold px-3 py-1 rounded-full border transition-all ${
+                isValidTotal
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : 'bg-rose-50 text-rose-700 border-rose-200'
+              }`}>
                 Total: {Math.round(totalWeight)}%
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
               <div>
-                <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1">
                   <span>Price Competitiveness</span>
-                  <span className="text-brand-600">{weights.price}%</span>
+                  <span className="font-mono font-semibold text-brand-indigo">{weights.price}%</span>
                 </div>
                 <input
                   type="range"
@@ -316,14 +312,14 @@ export default function NewProject() {
                   max="100"
                   value={weights.price}
                   onChange={(e) => handleWeightChange('price', e.target.value)}
-                  className="w-full accent-brand-600 cursor-pointer"
+                  className="w-full accent-brand-indigo cursor-pointer bg-slate-200 h-2 rounded-lg"
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1">
                   <span>SLA & Uptime Reliability</span>
-                  <span className="text-brand-600">{weights.sla}%</span>
+                  <span className="font-mono font-semibold text-brand-indigo">{weights.sla}%</span>
                 </div>
                 <input
                   type="range"
@@ -331,14 +327,14 @@ export default function NewProject() {
                   max="100"
                   value={weights.sla}
                   onChange={(e) => handleWeightChange('sla', e.target.value)}
-                  className="w-full accent-brand-600 cursor-pointer"
+                  className="w-full accent-brand-indigo cursor-pointer bg-slate-200 h-2 rounded-lg"
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1">
                   <span>Feature Coverage</span>
-                  <span className="text-brand-600">{weights.features}%</span>
+                  <span className="font-mono font-semibold text-brand-indigo">{weights.features}%</span>
                 </div>
                 <input
                   type="range"
@@ -346,14 +342,14 @@ export default function NewProject() {
                   max="100"
                   value={weights.features}
                   onChange={(e) => handleWeightChange('features', e.target.value)}
-                  className="w-full accent-brand-600 cursor-pointer"
+                  className="w-full accent-brand-indigo cursor-pointer bg-slate-200 h-2 rounded-lg"
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1">
                   <span>Support Responsiveness</span>
-                  <span className="text-brand-600">{weights.support}%</span>
+                  <span className="font-mono font-semibold text-brand-indigo">{weights.support}%</span>
                 </div>
                 <input
                   type="range"
@@ -361,29 +357,29 @@ export default function NewProject() {
                   max="100"
                   value={weights.support}
                   onChange={(e) => handleWeightChange('support', e.target.value)}
-                  className="w-full accent-brand-600 cursor-pointer"
+                  className="w-full accent-brand-indigo cursor-pointer bg-slate-200 h-2 rounded-lg"
                 />
               </div>
             </div>
           </div>
 
-          {/* Section 3: Vendor File Uploads */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+          {/* Section 3: Vendor Proposal File Uploads */}
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-level-1 space-y-4">
+            <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Upload className="w-5 h-5 text-brand-600" />
-                  3. Upload Vendor Proposal Documents (Min. 2 Vendors)
+                <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+                  <Upload className="w-5 h-5 text-brand-indigo" />
+                  3. Upload Vendor Proposals (Min. 2 Vendors)
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Supports PDF and DOCX proposal files.</p>
+                <p className="text-xs text-slate-500 mt-0.5">Attach PDF or DOCX proposal documents.</p>
               </div>
 
               <button
                 type="button"
                 onClick={addVendorRow}
-                className="text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 px-3 py-1.5 rounded-xl transition-colors inline-flex items-center gap-1.5"
+                className="text-xs font-medium text-brand-indigo hover:text-brand-indigoHover bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1.5"
               >
-                <Plus className="w-3.5 h-3.5" /> Add Another Vendor
+                <Plus className="w-3.5 h-3.5" /> Add Vendor
               </button>
             </div>
 
@@ -391,38 +387,47 @@ export default function NewProject() {
               {vendors.map((vendor, idx) => (
                 <div
                   key={vendor.id}
-                  className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-xl"
+                  className="p-4 bg-slate-50/50 border border-slate-200 rounded-xl space-y-3"
                 >
-                  <span className="text-xs font-bold text-slate-400 w-6">#{idx + 1}</span>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-xs font-mono font-bold text-slate-400">#{idx + 1}</span>
+                      <input
+                        type="text"
+                        value={vendor.name}
+                        onChange={(e) => updateVendorField(vendor.id, 'name', e.target.value)}
+                        placeholder="Vendor Name (e.g. CloudHosting Pro)"
+                        className="flex-1 max-w-xs bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:border-brand-indigo"
+                        required
+                      />
+                    </div>
+                    {vendors.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => removeVendorRow(vendor.id)}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
 
-                  <input
-                    type="text"
-                    value={vendor.name}
-                    onChange={(e) => updateVendorField(vendor.id, 'name', e.target.value)}
-                    placeholder="Vendor Name (e.g. CloudHosting Pro)"
-                    className="sm:w-1/3 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:border-brand-500"
-                    required
-                  />
-
-                  <div className="flex-1 relative">
+                  {/* Drag-and-drop file upload zone */}
+                  <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-200 hover:border-brand-indigo bg-white hover:bg-indigo-50/30 rounded-lg cursor-pointer transition-all">
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
+                      <FileText className="w-4 h-4 text-brand-indigo shrink-0" />
+                      <span className="font-medium">
+                        {vendor.file ? vendor.file.name : 'Click to browse or drop PDF/DOCX proposal file'}
+                      </span>
+                    </div>
                     <input
                       type="file"
                       accept=".pdf,.docx,.txt"
                       onChange={(e) => updateVendorField(vendor.id, 'file', e.target.files[0])}
-                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-100 file:text-brand-700 hover:file:bg-brand-200 cursor-pointer"
-                      required
+                      className="hidden"
+                      required={!vendor.file}
                     />
-                  </div>
-
-                  {vendors.length > 2 && (
-                    <button
-                      type="button"
-                      onClick={() => removeVendorRow(vendor.id)}
-                      className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
+                  </label>
                 </div>
               ))}
             </div>
@@ -432,17 +437,17 @@ export default function NewProject() {
           <div className="flex items-center justify-end gap-4 pt-2">
             <Link
               to="/"
-              className="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+              className="px-5 py-2.5 text-xs font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-level-1"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={isAnalyzing}
-              className="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-lg shadow-brand-600/30 hover:shadow-brand-600/40 transition-all inline-flex items-center gap-2"
+              className="bg-brand-indigo hover:bg-brand-indigoHover text-white text-xs font-medium px-6 py-2.5 rounded-lg shadow-sm hover:shadow transition-all inline-flex items-center gap-2"
             >
               <Shield className="w-4 h-4" />
-              Analyze Proposals & Generate Intelligence Report
+              Analyze Proposals & Generate Report
             </button>
           </div>
         </form>
