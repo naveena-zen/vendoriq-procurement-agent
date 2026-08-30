@@ -10,7 +10,8 @@ from typing import List, Dict, Any, Optional
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Depends, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response, StreamingResponse, JSONResponse
+from fastapi.responses import Response, StreamingResponse, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 
 from sqlalchemy import create_engine, Column, String, Float, Integer, Text, DateTime, JSON, ForeignKey
@@ -514,6 +515,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Health Check Endpoints (for Render, Railway, Fly.io, DO App Platform)
+@app.get("/health")
+@app.get("/api/health")
+def health_check():
+    return {"status": "healthy", "service": "ProcureIQ", "version": "1.0.0"}
 
 # =====================================================================
 # SEED DATA INITIALIZER
@@ -1254,4 +1261,32 @@ def export_project_data(proj_id: str, format: str = Query("markdown"), db: Sessi
         return Response(content=json.dumps(ariba_payload, indent=2), media_type="application/json", headers={"Content-Disposition": f"attachment; filename=Ariba_Vendor_Import_{proj_id[:8]}.json"})
 
     raise HTTPException(status_code=400, detail="Invalid export format specified.")
+
+
+# =====================================================================
+# STATIC FILES & SPA ROUTING FALLBACK
+# =====================================================================
+
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+
+if os.path.exists(static_dir):
+    assets_dir = os.path.join(static_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        if full_path.startswith("api/") or full_path == "api":
+            raise HTTPException(status_code=404, detail="API endpoint not found")
+
+        file_path = os.path.join(static_dir, full_path)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+
+        index_path = os.path.join(static_dir, "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+
+        raise HTTPException(status_code=404, detail="Static index.html not found")
+
 

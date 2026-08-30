@@ -7,10 +7,14 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-surface-bg text-text-primary font-sans antialiased;
+    background-color: #0A0E17;
+    color: #F1F5F9;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
   *:focus-visible {
-    @apply outline-none ring-2 ring-accent-blue ring-offset-2 ring-offset-surface-bg transition-all;
+    outline: none;
+    box-shadow: 0 0 0 2px #3B82F6;
   }
 }
 
