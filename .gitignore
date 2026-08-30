@@ -1,0 +1,12 @@
+# Database & environment variables
+*.db
+.env
+__pycache__/
+*.pyc
+
+# Dependencies & build outputs
+node_modules/
+dist/
+.DS_Store
+.idea/
+.vscode/
