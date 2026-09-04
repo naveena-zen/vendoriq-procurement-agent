@@ -15,23 +15,7 @@
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Problem Statement](#problem-statement)
-3. [The Solution](#the-solution)
-4. [Key Features](#key-features)
-5. [AI Capabilities](#ai-capabilities)
-6. [Tech Stack](#tech-stack)
-7. [Architecture Overview](#architecture-overview)
-8. [AI Workflow](#ai-workflow)
-9. [Scoring Engine Overview](#scoring-engine-overview)
-10. [Screens / Modules](#screens--modules)
-11. [API Endpoints](#api-endpoints)
-12. [Project Structure](#project-structure)
-13. [Quick Start Guide](#quick-start-guide)
-14. [Environment Variables](#environment-variables)
-15. [Deployment](#deployment)
-16. [Future Roadmap](#future-roadmap)
-17. [Why This Project Stands Out](#why-this-project-stands-out)
+
 
 ---
 
