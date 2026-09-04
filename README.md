@@ -13,12 +13,6 @@
 
 ---
 
-## Table of Contents
-
-
-
----
-
 ## Project Overview
 
 ProcureIQ is a full-stack AI procurement intelligence platform that ingests multi-vendor proposal documents (PDF/DOCX), extracts structured commercial data, scores and ranks vendors using a deterministic weighted formula, flags contract risks with AI-generated redline suggestions, and produces ready-to-use negotiation emails and executive summaries — all from a single dashboard.
