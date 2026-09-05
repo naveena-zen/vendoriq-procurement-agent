@@ -41,6 +41,34 @@ ProcureIQ automates the entire upstream evaluation workflow in a single pipeline
 
 ---
 
+## Tech Stack
+
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|---------|
+| Frontend Framework | React | 18.2 | SPA shell and component rendering |
+| Frontend Build | Vite | 5.1 | Dev server and production bundler |
+| Routing | React Router DOM | 6.22 | Client-side page routing |
+| Styling | Tailwind CSS | 3.4 | Utility-first CSS; `brand` colour palette extended |
+| Typography | Inter (Google Fonts) | — | UI font loaded via `index.html` |
+| Charts | Recharts | 2.12 | Cost comparison bar chart |
+| Icons | Lucide React | 0.344 | UI icon set |
+| Backend Framework | FastAPI | 0.100+ | REST API, file upload, streaming responses |
+| ASGI Server | Uvicorn | 0.22+ | Production-ready Python ASGI server |
+| ORM | SQLAlchemy | 2.0 | Database abstraction layer |
+| Schema Validation | Pydantic | 2.0 | Request/response validation and extraction schema |
+| Primary Database | SQLite | built-in | Default; zero-config local dev |
+| Alt Database | PostgreSQL | via psycopg2-binary | Drop-in swap via `DATABASE_URL` env var |
+| AI Provider 1 | Anthropic (Claude) | 0.18+ | Extraction, risk, summary, negotiation |
+| AI Provider 2 | Groq | 0.4+ | Benchmarking, RAG chat |
+| PDF Parsing | pdfplumber | 0.10+ | Text extraction from PDF proposals |
+| DOCX Parsing | python-docx | 1.0+ | Text extraction from Word documents |
+| Excel Generation | openpyxl | 3.1+ | Styled `.xlsx` export workbook |
+| Math / Embeddings | NumPy | 1.24+ | 64-dim character-frequency embedding vectors |
+| Environment Config | python-dotenv | 1.0+ | `.env` file loading |
+| HTTP Multipart | python-multipart | 0.0.6+ | File upload support in FastAPI |
+
+---
+
 ## Key Features
 
 - **Compliance Scoring** — deterministic weighted formula across Price, SLA, Features, and Support (0–100 scale)
