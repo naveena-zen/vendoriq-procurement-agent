@@ -88,30 +88,6 @@ ProcureIQ automates the entire upstream evaluation workflow in a single pipeline
 
 ---
 
-## AI Capabilities
-
-ProcureIQ uses a **hybrid dual-provider AI architecture**, routing each task to the model best suited for it:
-
-### Claude Sonnet 4.6 (Anthropic) — reasoning-heavy tasks
-
-| Task | Why Claude |
-|------|-----------|
-| Document extraction | Structured JSON output from unstructured prose requires deep reading comprehension |
-| Risk detection & redlines | Legal clause identification and specific contract language drafting require reasoning depth |
-| Executive summary | Synthesis of ranked data into professional narrative prose |
-| Negotiation email drafting | Contextual persuasive writing with vendor-specific pricing and clause references |
-
-### Groq + Llama 3.3 70B — speed-critical tasks
-
-| Task | Why Groq |
-|------|---------|
-| Price benchmarking | Simple classification (low/typical/high) against general market knowledge; speed matters |
-| Proposal chat (RAG) | Interactive Q&A on pre-retrieved chunks; sub-second latency for good UX |
-
-**Fallback Mode:** If API keys are absent or calls fail, the system automatically falls back to a heuristic local engine — regex-based cost/uptime extraction for document parsing and hand-crafted JSON for other tasks — so the application runs and demonstrates end-to-end flow without any API keys.
-
----
-
 ## Architecture Overview
 
 ```
