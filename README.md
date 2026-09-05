@@ -372,7 +372,3 @@ The frontend reads one optional variable at build/dev time:
 **Grounded RAG chat, not a general chatbot:** The chat assistant only cites content from uploaded proposal documents, using cosine-similarity retrieval over chunked vendor text. If the answer is not in the document, it says so — procurement-safe behaviour.
 
 **Production-ready fallback mode:** The application ships with a heuristic fallback engine that handles all AI tasks locally using regex extraction and pre-crafted JSON, enabling offline demos, CI runs, and cost-constrained environments with no API dependency.
-
----
-
-*Built with FastAPI + React + Claude Sonnet 4.6 + Groq Llama 3.3 70B*
